@@ -9,7 +9,6 @@ f.wait = async (func, waitTime, timeout) => {
   let result
   while (!(result = await func()) && !timeouted) {
     await f.sleep(waitTime)
-    console.log(result)
   }
   return result
 }
