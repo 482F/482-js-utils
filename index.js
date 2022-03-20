@@ -13,6 +13,27 @@ f.wait = async (func, waitTime, timeout) => {
   return result
 }
 
+f.filteringByHistory = (list, historyName, converter = (i) => i) => {
+  const fs = require('fs')
+  fs.appendFileSync(historyName, '', 'utf8')
+  const histories = fs.readFileSync(historyName, 'utf8').split('\n')
+  const filteredList = []
+  let appendText = ''
+
+  for (const item of list) {
+    const convertedItem = converter(item).replaceAll(/[\r\n]/g, '')
+    if (histories.includes(convertedItem)) {
+      continue
+    } else {
+      filteredList.push(item)
+      appendText += convertedItem + '\n'
+    }
+  }
+  fs.appendFileSync(historyName, appendText, 'utf8')
+  return filteredList
+}
+
 module.exports = {
   ...f,
 }
+
