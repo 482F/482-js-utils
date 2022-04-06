@@ -2,6 +2,7 @@ const f = {}
 
 f.sleep = async (ms = 10) =>
   await new Promise((resolve) => setTimeout(resolve, ms))
+
 f.wait = async (func, waitTime, timeout) => {
   let timeouted = false
   if (timeout) {
@@ -34,6 +35,33 @@ f.filteringByHistory = (list, historyName, converter = (i) => i) => {
   return filteredList
 }
 
+f.clip = async (data) => {
+  const blobs = Object.fromEntries(
+    Object.entries(data).map(([type, body]) => [
+      type,
+      new Blob([body], { type }),
+    ])
+  )
+  const clipboardItem = new ClipboardItem(blobs)
+  await navigator.clipboard.write([clipboardItem])
+}
+
+f.clipText = async (text) => f.clip({ 'text/plain': text })
+
+f.download = (fileName, datum) => {
+  const a = document.createElement('a')
+  a.download = fileName
+  const [[type, body]] = Object.entries(datum)
+  const url = URL.createObjectURL(new Blob([body], { type }))
+  a.href = url
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+f.downloadText = (fileName, text) =>
+  f.download(fileName, { 'text/plain': text })
+
 module.exports = {
   ...f,
 }
+
