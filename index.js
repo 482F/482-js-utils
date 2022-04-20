@@ -1,11 +1,9 @@
 const f = {}
 
-const common = require('./modules/common.js')
+import common from './modules/common.js'
 Object.assign(f, common)
 
-const textarea = require('./modules/textarea.js')
+import textarea from './modules/textarea.js'
 Object.assign(f, textarea)
 
-module.exports = {
-  ...f,
-}
+export default { ...f }

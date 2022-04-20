@@ -61,7 +61,4 @@ f.download = (fileName, datum) => {
 f.downloadText = (fileName, text) =>
   f.download(fileName, { 'text/plain': text })
 
-module.exports = {
-  ...f,
-}
-
+export default { ...f }
