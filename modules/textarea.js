@@ -111,6 +111,4 @@ f.textarea.spliceRow = (
   )
 }
 
-module.exports = {
-  ...f,
-}
+export default { ...f }
