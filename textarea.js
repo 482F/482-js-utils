@@ -1,7 +1,4 @@
-const f = {}
-f.textarea = {}
-
-f.textarea.getPosition = (textarea, { index, row, column }) => {
+export function getPosition(textarea, { index, row, column }) {
   if ([null, undefined].includes(index)) {
     column ??= 0
     row ??= 0
@@ -37,13 +34,13 @@ f.textarea.getPosition = (textarea, { index, row, column }) => {
   }
 }
 
-f.textarea.getSelection = (textarea) => {
+export function getSelection(textarea) {
   const index = textarea.selectionStart
-  return f.textarea.getPosition(textarea, { index })
+  return getPosition(textarea, { index })
 }
 
-f.textarea.scrollToPosition = (textarea, position) => {
-  const { row } = f.textarea.getPosition(textarea, position)
+export function scrollToPosition(textarea, position) {
+  const { row } = getPosition(textarea, position)
   const { clientHeight, scrollHeight } = textarea
   const lines = textarea.value.split('\n')
   const lineHeight = scrollHeight / lines.length
@@ -52,22 +49,22 @@ f.textarea.scrollToPosition = (textarea, position) => {
   textarea.scrollTo(0, delta)
 }
 
-f.textarea.setPosition = (textarea, position) => {
-  const { index, row } = f.textarea.getPosition(textarea, position)
+export function setPosition(textarea, position) {
+  const { index, row } = getPosition(textarea, position)
   textarea.selectionStart = index
   textarea.selectionEnd = index
-  f.textarea.scrollToPosition(textarea, { row })
+  scrollToPosition(textarea, { row })
 }
 
-f.textarea.spliceText = (
+export function spliceText(
   textarea,
   startPosition,
   deleteCount,
   text,
   returnCursor = true
-) => {
-  const { index } = f.textarea.getPosition(textarea, startPosition)
-  const { index: baseIndex } = f.textarea.getSelection(textarea)
+) {
+  const { index } = getPosition(textarea, startPosition)
+  const { index: baseIndex } = getSelection(textarea)
   const value = textarea.value
   const newText =
     value.slice(0, index) +
@@ -77,38 +74,30 @@ f.textarea.spliceText = (
   const targetIndex =
     baseIndex < index ? baseIndex : baseIndex + text.length - deleteCount
   if (returnCursor) {
-    f.textarea.setPosition(textarea, { index: targetIndex })
+    setPosition(textarea, { index: targetIndex })
   }
 }
 
-f.textarea.getRow = (textarea, position) => {
-  const { row } = f.textarea.getPosition(textarea, position)
+export function getRow(textarea, position) {
+  const { row } = getPosition(textarea, position)
   return textarea.value.split('\n')[row]
 }
 
-f.textarea.spliceRow = (
+export function spliceRow(
   textarea,
   { row },
   deleteRowCount,
   text,
   returnCursor = true
-) => {
+) {
   if ([undefined, null].includes(row)) {
     throw new Error('row is undefined')
   }
-  const { index: deleteStart } = f.textarea.getPosition(textarea, { row })
-  const { index: deleteEnd } = f.textarea.getPosition(textarea, {
+  const { index: deleteStart } = getPosition(textarea, { row })
+  const { index: deleteEnd } = getPosition(textarea, {
     row: row + deleteRowCount - 1,
     column: -1,
   })
   const deleteCount = deleteEnd - deleteStart
-  f.textarea.spliceText(
-    textarea,
-    { index: deleteStart },
-    deleteCount,
-    text,
-    returnCursor
-  )
+  spliceText(textarea, { index: deleteStart }, deleteCount, text, returnCursor)
 }
-
-export default { ...f }
