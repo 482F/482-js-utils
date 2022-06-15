@@ -42,3 +42,13 @@ export function download(fileName, datum) {
 export function downloadText(fileName, text) {
   return download(fileName, { 'text/plain': text })
 }
+
+export function toAsyncCallback(func) {
+  return new Promise((resolve, reject) => {
+    func((err, result) => {
+      if (err) reject(err)
+      resolve(result)
+    })
+  })
+}
+
